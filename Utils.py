@@ -49,35 +49,23 @@ def parse_coord(raw: str, max=float('inf')): #raw: str is called a type hint, te
             return (r,c)
     return None
 
-def getDimension(prompt="[default prompt]",min_val = 1):
+def get_dimension(prompt="[default prompt]",min_val = 1):
 
-    dim = input(prompt)
-    if dim.lower() in ("q","exit",""):
-        return None
-    validEntries = False
-    while not validEntries:
+    
+    while True:
+        dim = input(prompt)
+        if dim.lower() in ("q","exit",""):
+            return None
         try:
             dim = int(dim)
             if (dim<min_val):
                 print(f"{RED}Invalid input: value must be at least {min_val}.{RESET}")
                 continue
-            validEntries = True
+            break
         except ValueError:
             print(f"{RED}Invalid input: value must be at least {min_val}.{RESET}")
     return dim
 
-def disjointSets(remaining_placements):
-        disjointSets = set()
-        count = 0;
-        for placement in remaining_placements:
-            if placement.isdisjoint(disjointSets):
-                count+=1
-                disjointSets = disjointSets.union(placement)
-        return count
 
 
-placements = findPlacements([(0,0),(0,1),(0,2),(0,3)])
-count = disjointSets(placements)
-print(f"Disjoint sets: {count}")
-for p in placements:
-    print(p)
+

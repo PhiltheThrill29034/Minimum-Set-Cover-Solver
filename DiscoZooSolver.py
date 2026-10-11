@@ -6,7 +6,7 @@ from DiscoZooState import DiscoZooState
 class DiscoZooSolver:
 
     @staticmethod
-    def aStarSolver(initialState):
+    def astar_solver(initialState):
 
         frontier = []
 
@@ -32,7 +32,7 @@ class DiscoZooSolver:
 
             closedSet.add(current)
             
-            for child in current.getChildren():
+            for child in current.get_children():
 
                 
                 if child in closedSet:
@@ -45,7 +45,7 @@ class DiscoZooSolver:
         return None
 
     @staticmethod
-    def aStarSolverDebug(initialState):
+    def astar_solver_debug(initialState):
     
         frontier = []
     
@@ -61,10 +61,11 @@ class DiscoZooSolver:
             iter +=1
                 
             current = heapq.heappop(frontier)
-            if iter % 2000 == 0:
+            if iter % 10000 == 0:
                     print(f"[A*]: {iter} states explored\n" 
                           f"Frontier size: {len(frontier)}\n"
-                          f"Depth: {current.gCost}"
+                          f"Depth: {current.g_cost}\n"
+                          f"F-score: {current.f}\n"
                           f"Remaining placements: {len(current.remaining_placements)}")
     
             if (current.isFinal()):
@@ -75,7 +76,7 @@ class DiscoZooSolver:
     
             closedSet.add(current)
                 
-            for child in current.getChildren():
+            for child in current.get_children():
     
                     
                 if child in closedSet:
@@ -85,7 +86,7 @@ class DiscoZooSolver:
     
                 heapq.heappush(frontier,child)
     
-            return None
+        return None
 
     @staticmethod
     def backtrack(final_state):
@@ -107,7 +108,7 @@ class DiscoZooSolver:
            
 
     @staticmethod
-    def backtrackUI(final_state):
+    def backtrack_UI(final_state):
     
         temp = final_state
             
@@ -125,7 +126,7 @@ class DiscoZooSolver:
             i+=1
     
     @staticmethod
-    def printBoard(clicks,rows=5,cols=5):
+    def print_board(clicks,rows=5,cols=5):
 
         
 

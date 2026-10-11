@@ -27,31 +27,29 @@ class DiscoZooState:
 
 
     @property
-    def gCost(self):
-        return self.parent.gCost + 1 if self.parent else 0
+    def g_cost(self):
+        return self.parent.g_cost + 1 if self.parent else 0
 
     @property
     def f(self):
-        return self.gCost + self.h()
+        return self.g_cost + self.h()
 
      
 
-    def getChildren(self):
+    def get_children(self):
 
         children = set()
 
-        ## seperate the unique tiles of all the placements
-        ## i did a double loop previously looping through every possible click. 
-        ## but some tiles can exist on many patterns at the same time. 
-        ## thus producing more child states for the same clicks,
-        ## slowing down the algorithm
+        
+        #only branch on the possible clicks of one placement. dramatically decrease branching factor
+        target_placement = min(self.remaining_placements, key=len)
 
-        unique_clicks = {tile for placement in self.remaining_placements for tile in placement}
-
-        for click in unique_clicks:
+        for click in target_placement:
 
             ## survivors needs to be a frozenset so that it is hashable
-            survivors = frozenset(p for p in self.remaining_placements if click not in p)
+            survivors = frozenset(
+                p for p in self.remaining_placements if click not in p
+            )
 
 
             child = DiscoZooState(self, survivors, click)
@@ -62,6 +60,7 @@ class DiscoZooState:
 
     ## we have to define these methods so that the states are compared based on the remaining placements
     ## and not memory addresses etc.
+
     def __eq__(self, other):
         if not isinstance(other, DiscoZooState):
             return False
@@ -78,12 +77,12 @@ class DiscoZooState:
         elif (len(self.remaining_placements) != len(other.remaining_placements)):
             # if equal, choose the one with the least remaining_placements first
             # example: child1_f = 1 + ceil(5/4) = 3 child2_f = 1 + (6/4)=3
-            # here, 4 is the pattern size, 1 is the gCost and 5 and 6 are the remaining placements
+            # here, 4 is the pattern size, 1 is the g_cost and 5 and 6 are the remaining placements
             # for child_1 and child_2 respectively
             
             return len(self.remaining_placements) < len(other.remaining_placements)
         else:
-            return self.distanceFromCenter() < other.distanceFromCenter()
+            return self.distance_from_center() < other.distance_from_center()
 
     def h_zero(self):
         return 0
@@ -102,12 +101,12 @@ class DiscoZooState:
         return math.ceil(remaining/pattern_size)
 
     def h_disjoint(self):
-        disjointSets = set()
+        disjoint_sets = set()
         count = 0;
         for placement in self.remaining_placements:
-            if placement.isdisjoint(disjointSets):
+            if placement.isdisjoint(disjoint_sets):
                 count+=1
-                disjointSets = disjointSets.union(placement)
+                disjoint_sets = disjoint_sets.union(placement)
         return count
 
     def h(self):
@@ -119,7 +118,7 @@ class DiscoZooState:
     def get_coords(self):
         return str(self.last_click)
 
-    def distanceFromCenter(self):
+    def distance_from_center(self):
         if self.last_click is None:
             return 0
 

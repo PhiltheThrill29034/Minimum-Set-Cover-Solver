@@ -89,22 +89,35 @@ def custom_tile_input(min_tiles=2,max_tiles=5):
         
 
 def get_solution(pattern,rows=5,cols=5):
+
+    print(f"Valid Heuristics: {DiscoZooState.VALID_HEURISTICS}")
+    heuristic = input("Pick a heuristic: ")
     
     replacements = findPlacements(pattern,rows,cols)
 
     DiscoZooState.set_grid_dimensions(rows,cols)
 
     try:
-        DiscoZooState.set_heuristic("disjoint")
+        DiscoZooState.set_heuristic(heuristic)
     except ValueError as e:
         print(e)
         return None
+    
     initialState = DiscoZooState(None, replacements, None)
 
-    solution = DiscoZooSolver.aStarSolver(initialState)
+    solution = DiscoZooSolver.astar_solver_debug(initialState)
+    
 
     if solution is not None:
-        return DiscoZooSolver.backtrack(solution)
+        sol_clicks = DiscoZooSolver.backtrack(solution)
+
+        uncovered = [p for p in replacements if set(sol_clicks).isdisjoint(p)]
+    
+        print(f"Total placements on 7x7: {len(replacements)}")
+        print(f"Solution clicks: {len(sol_clicks)}")
+        print(f"Uncovered placements: {len(uncovered)}") #verify that no uncovered placements are left
+
+        return sol_clicks
     else:
         return None
     
@@ -144,7 +157,7 @@ def disco_zoo_version():
         
             if solution is not None:
                 print(f"{GREEN}Optimal click sequence found!{RESET}")
-                DiscoZooSolver.printBoard(solution)
+                DiscoZooSolver.print_board(solution)
             else:
                 print(f"{RED}No solution found...{RESET}")
         
@@ -158,28 +171,32 @@ def custom_grid_version():
     while(True):
         print(f"{DIM}Press enter, 'q', or type \"exit\" anytime to exit custom grid mode{RESET}")
 
-        rowNum = getDimension(f"{CYAN}[1]{RESET} Enter number of rows (or Enter to cancel): ")
+        rowNum = get_dimension(f"{CYAN}[1]{RESET} Enter number of rows (or Enter to cancel): ")
         
         if rowNum is None:
-            print(f"{YELLOW}Exiting custom grid mode... {RESET}")
+            print(f"{YELLOW}Exiting custom grid mode...\n {RESET}")
             return
         
-        colNum = getDimension(f"{CYAN}[2]{RESET} Enter number of columns (or Enter to cancel): ")
+        colNum = get_dimension(f"{CYAN}[2]{RESET} Enter number of columns (or Enter to cancel): ")
         if colNum is None:
-            print(f"{YELLOW}Exiting custom grid mode... {RESET}")
+            print(f"{YELLOW}Exiting custom grid mode...\n {RESET}")
             return
         
         pattern = custom_tile_input(1,rowNum*colNum)
 
         if pattern is not None:
             print("Code reached here")
+            start = time.time_ns()
             solution = get_solution(pattern,rowNum,colNum)
+            
+            end = time.time_ns()
             print("Checkpoint 2 - Solution computed")
             if solution is not None:
+                print(f"{DIM}Solution found in {(end-start)/1000000:.2f} ms{RESET}")
                 print(f"{GREEN}Optimal click sequence found!{RESET}")
-                DiscoZooSolver.printBoard(solution,rowNum,colNum)
+                DiscoZooSolver.print_board(solution,rowNum,colNum)
             else:
-                print(f"{RED}No solution found!{RESET}")
+                print(f"{RED}No solution found...{RESET}")
 
 
 
@@ -189,7 +206,7 @@ def main_loop():
     header = "     MINIMUM SET COVER PATHFINDING ALGORITHM     "
     print(f"\n{BOLD}"+"═"*len(header)+f"{RESET}")
     print(f"{BOLD}{header}{RESET}")
-    print(f"\n{BOLD}"+"═"*len(header)+f"{RESET}")
+    print(f"{BOLD}"+"═"*len(header)+f"{RESET}")
 
     while (True):
         print(f" {CYAN}[1]{RESET} Disco Zoo Mode")
