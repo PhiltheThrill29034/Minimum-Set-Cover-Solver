@@ -66,6 +66,46 @@ def get_dimension(prompt="[default prompt]",min_val = 1):
             print(f"{RED}Invalid input: value must be at least {min_val}.{RESET}")
     return dim
 
+def order_by_click(clicks, placements,rows=5,cols=5):
+
+
+    ordered = []
+
+    remaining = set(placements)
+
+    available_clicks = set(clicks)
+
+    mid_r = rows//2
+    mid_c = cols//2
+
+    while (available_clicks):
+
+        best_score = (-1,float("-inf"))
+        best_click = None
+        
+
+        for r,c in available_clicks:
+
+            covered = sum(1 for p in remaining if (r,c) in p)
+
+            distance_center = abs(r - mid_r) + abs(c - mid_c)
+
+            score = (covered,-distance_center)
+
+            if score > best_score:
+                best_score = score
+                best_click = (r,c)
+
+        ordered.append(best_click)
+        available_clicks.remove(best_click)
+
+        remaining = {p for p in remaining if best_click not in p}
+
+    return ordered
+            
+
+
+
 
 
 

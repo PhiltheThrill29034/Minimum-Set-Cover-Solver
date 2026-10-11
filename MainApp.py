@@ -117,7 +117,8 @@ def get_solution(pattern,rows=5,cols=5):
         print(f"Solution clicks: {len(sol_clicks)}")
         print(f"Uncovered placements: {len(uncovered)}") #verify that no uncovered placements are left
 
-        return sol_clicks
+        ordered = order_by_click(sol_clicks,replacements,rows,cols)
+        return ordered
     else:
         return None
     
