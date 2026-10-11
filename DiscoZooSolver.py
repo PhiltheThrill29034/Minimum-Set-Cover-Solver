@@ -139,10 +139,13 @@ class DiscoZooSolver:
         col_headers = "".join(f" Col {c+1} ".center(max_cell_len) + " " for c in range(cols))
         print(header_pad + col_headers)
 
-        seperator = " "*max_row_len+"+"+("-"*max_cell_len+"+")*cols
+        seperator = " "*max_row_len+"├"+("─"*max_cell_len+"┼")*(cols -1) + ("─"*max_cell_len+"┤")
 
         click_nums = {coord:step for step,coord in enumerate(clicks,1)}
-        print(seperator)
+
+        top_line = " "*max_row_len+"┌"+("─"*max_cell_len+"┬")*(cols -1) + ("─"*max_cell_len+"┐")
+        bottom_line = " "*max_row_len+"└"+("─"*max_cell_len+"┴")*(cols -1) + ("─"*max_cell_len+"┘")
+        print(top_line)
 
         for r in range(rows):
 
@@ -154,8 +157,8 @@ class DiscoZooSolver:
                 outp = f"[{click_nums[(r,c)]}]" if (r,c) in clicks else "."
                 row_cells.append(outp.center(max_cell_len))
                 
-            print(row_label+"|"+"|".join(row_cells)+"|")
-            print(seperator)
+            print(row_label+"│"+"│".join(row_cells)+"│")
+            print(seperator) if r < rows - 1 else print(bottom_line)
 
 
 

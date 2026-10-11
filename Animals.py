@@ -45,13 +45,23 @@ class NorthernAnimal(Enum):
     def __str__(self):
         return self.name.capitalize()
 
-# class OutbackAnimal(Enum):
+class PolarAnimal(Enum):
+    SEAL = ((0,0), (1,1), (2,2), (1,3))
+    MUSKOX = ((0,0), (1,0), (0,1), (1,2))
+    PENGUIN = ((0,1), (1,1), (2,2), (2,0))
+    POLAR_BEAR = ((0,0), (0,2), (1,2))
+    WALRUS = ((0,0), (1,1), (1,2))
+    YETI = ((0,0), (2,0))
+
+    def __str__(self):
+        return self.name.replace("_"," ").title()
 
 REGIONS = {
     "FARM": FarmAnimal,
     "OUTBACK": OutbackAnimal,
     "SAVANNAH": SavannahAnimal,
-    "NORTHERN": NorthernAnimal
+    "NORTHERN": NorthernAnimal,
+    "POLAR": PolarAnimal
 }
 
 
